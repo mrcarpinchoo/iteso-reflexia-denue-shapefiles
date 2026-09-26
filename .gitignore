@@ -1,0 +1,9 @@
+# User inputs (DENUE downloads and class lists, see README)
+input/
+
+# Generated shapefiles
+output/
+
+# Python
+.venv/
+__pycache__/
