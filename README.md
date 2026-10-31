@@ -1,9 +1,9 @@
 # DENUE shapefiles by activity class
 
 Splits a state's [DENUE](https://www.inegi.org.mx/app/mapa/denue/) download from INEGI into one
-shapefile per SCIAN activity class (*clase de actividad económica*), ready to add as layers in
-ArcGIS Pro. Only the classes you list are extracted; each shapefile holds one point per establishment,
-of every size.
+shapefile per SCIAN activity class (*clase de actividad económica*), grouped into one folder per
+ReflexIA strategic sector and ready to add as layers in ArcGIS Pro. Only the classes you list are
+extracted; each shapefile holds one point per establishment, of every size.
 
 Developed for ReflexIA's observatory as part of PAP 4J10A, a professional practicum program at ITESO.
 
@@ -39,16 +39,19 @@ curl -L -o input/denue_09_shp.zip https://www.inegi.org.mx/contenidos/masiva/den
 **2. A CSV with the classes to extract**, e.g. `input/scian_class_ids.csv`, which you create in
 this exact format:
 
-- One column only, with the header `scian_class_id` on the first line.
-- One 6-digit SCIAN class code per line (codes can be looked up in INEGI's
-  [SCIAN classifier](https://www.inegi.org.mx/app/scian/)).
-- Each code only once. UTF-8 encoding.
+- Three columns, with the header `scian_class_id,clase_actividad,Sector Estratégico de RefleIA` on
+  the first line.
+- One class per line: its 6-digit SCIAN code (codes can be looked up in INEGI's
+  [SCIAN classifier](https://www.inegi.org.mx/app/scian/)), its name, and its ReflexIA sector.
+- The name and sector are required, and they become folder names, so they can't contain
+  `\ / : * ? " < > |`. Names with commas need quotes.
+- A code can appear under several sectors, but only once in each. UTF-8 encoding.
 
 ```csv
-scian_class_id
-325412
-334410
-541510
+scian_class_id,clase_actividad,Sector Estratégico de RefleIA
+311110,Elaboración de alimentos balanceados para animales,Agroalimentario
+334519,"Fabricación de otros instrumentos de medición, control, navegación, y equipo médico electrónico",Electrónica y semiconductores
+334519,"Fabricación de otros instrumentos de medición, control, navegación, y equipo médico electrónico",Farmacéutica y servicios de salud
 ```
 
 If the CSV breaks any rule, the script stops without writing anything and lists each problem with
@@ -62,26 +65,33 @@ python main.py input/scian_class_ids.csv input/denue_09_shp.zip
 ```
 
 The script prints how many establishments each class has and lists any class with none in the state;
-those classes get no folder.
+those classes get no folder, and a sector with no establishments gets none either.
 
 ## Output
 
-One folder per class in `output/<zip name>/`, each holding that class's shapefile, named after its
-SCIAN code:
+One folder per sector in `output/<zip name>/`, holding one folder per class, named with its SCIAN
+code and name. Each class folder holds that class's shapefile, named after its SCIAN code:
 
 ```
 output/denue_09_shp/
-  scian_325412/
-    scian_325412.shp
-    scian_325412.shx
-    scian_325412.dbf
-    scian_325412.prj
-    scian_325412.cpg
-  scian_334410/
+  Agroalimentario/
+    311110 Elaboración de alimentos balanceados para animales/
+      scian_311110.shp
+      scian_311110.shx
+      scian_311110.dbf
+      scian_311110.prj
+      scian_311110.cpg
+  Turismo/
     ...
 ```
 
+A class listed under several sectors is written to each of them, so its establishments appear in
+each sector's folder; the total the script prints counts them once.
+
 Each run replaces the previous output for that zip.
+
+Class names make these paths long, up to about 220 characters from the project folder. Windows
+usually limits paths to 259 characters, so keep the project in a short path there.
 
 A shapefile is several files with the same name; keep them together:
 
@@ -92,7 +102,8 @@ A shapefile is several files with the same name; keep them together:
 | `.cpg` | text encoding (UTF-8), so accents display correctly |
 
 To use them in ArcGIS Pro, add the `output/<zip name>/` folder as a folder connection in the Catalog pane,
-then drag the shapefiles onto a map. The class name of each layer is in its `nombre_act` field.
+then drag the shapefiles onto a map. The class name of each layer is in its folder name, and DENUE's
+own wording of it is in the `nombre_act` field.
 
 The attributes are DENUE's original fields (in Spanish), including `codigo_act` and `nombre_act`
 (class), `nom_estab` (name), `per_ocu` (size by employees), address fields, `municipio`,
