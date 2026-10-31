@@ -2,7 +2,7 @@
 Write one shapefile per SCIAN class from an INEGI DENUE state download, grouped by ReflexIA sector.
 
 Inputs:
-  CLASSES_CSV  columns scian_class_id, clase_actividad and Sector Estratégico de RefleIA,
+  CLASSES_CSV  columns scian_class_id, scian_class_name and reflexia_sector,
                one row per class and sector
   DENUE_ZIP    a state's shapefile zip from https://www.inegi.org.mx/contenidos/masiva/denue/
                e.g. denue_14_shp.zip, used as downloaded
@@ -21,7 +21,7 @@ from pathlib import Path
 
 import geopandas as gpd
 
-COLUMNS = ["scian_class_id", "clase_actividad", "Sector Estratégico de RefleIA"]
+COLUMNS = ["scian_class_id", "scian_class_name", "reflexia_sector"]
 OUTPUT_DIR = Path(__file__).resolve().parent / "output"
 
 

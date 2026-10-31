@@ -39,8 +39,7 @@ curl -L -o input/denue_09_shp.zip https://www.inegi.org.mx/contenidos/masiva/den
 **2. A CSV with the classes to extract**, e.g. `input/scian_class_ids.csv`, which you create in
 this exact format:
 
-- Three columns, with the header `scian_class_id,clase_actividad,Sector Estratégico de RefleIA` on
-  the first line.
+- Three columns, with the header `scian_class_id,scian_class_name,reflexia_sector` on the first line.
 - One class per line: its 6-digit SCIAN code (codes can be looked up in INEGI's
   [SCIAN classifier](https://www.inegi.org.mx/app/scian/)), its name, and its ReflexIA sector.
 - The name and sector are required, and they become folder names, so they can't contain
@@ -48,7 +47,7 @@ this exact format:
 - A code can appear under several sectors, but only once in each. UTF-8 encoding.
 
 ```csv
-scian_class_id,clase_actividad,Sector Estratégico de RefleIA
+scian_class_id,scian_class_name,reflexia_sector
 311110,Elaboración de alimentos balanceados para animales,Agroalimentario
 334519,"Fabricación de otros instrumentos de medición, control, navegación, y equipo médico electrónico",Electrónica y semiconductores
 334519,"Fabricación de otros instrumentos de medición, control, navegación, y equipo médico electrónico",Farmacéutica y servicios de salud
